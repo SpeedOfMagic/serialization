@@ -12,7 +12,7 @@ class Evaluator:
         DictObject(dict1={"D" + str(i): i ** 2 for i in range(10)},
                    dict2={"a": -123456789},
                    dict3={s: s + s + s for s in ["a", "b", "c", "d", "e", "f"]}),
-        CompositeObject(int1=1234567932415896379823417265823679394567, float1=0.0001,
+        CompositeObject(int1=123456789987654321, float1=0.0001,
                         str1="Some more of an exciting and interesting text!" * 100,
                         list1=list(range(500)),
                         dict1={"INT" + str(i): str(i) * 100 for i in range(100)})
@@ -22,6 +22,8 @@ class Evaluator:
         NativeSerializer(),
         XMLSerializer(),
         JSONSerializer(),
+        YamlSerializer(),
+        MessagePackSerializer(),
     )
 
     INDEX = list(map(lambda obj: obj.__class__.__name__, OBJECTS_TO_EVALUATE))
@@ -47,6 +49,8 @@ class Evaluator:
             number=self.num_tests,
             globals=locals()
         )
+        used_time_to_serialize = round(used_time_to_serialize, 6)
+
         self.serialization_time.set(used_time_to_serialize)
 
         serialized = serializer.serialize(obj)
@@ -57,6 +61,7 @@ class Evaluator:
             number=self.num_tests,
             globals=locals()
         )
+        used_time_to_deserialize = round(used_time_to_deserialize, 6)
         self.deserialization_time.set(used_time_to_deserialize)
         
         deserialized = serializer.deserialize(serialized)
@@ -64,6 +69,12 @@ class Evaluator:
             f'Serializer {serializer.__class__.__name__} returned wrong value for object {obj.__class__.__name__}'
 
         self.total_time.set(used_time_to_serialize + used_time_to_deserialize)
+
+        print('RESULTS:')
+        print('Total size (in bytes):', len(serialized))
+        print('Serialization time:', used_time_to_serialize, 's')
+        print('Deserialization time:', used_time_to_deserialize, 's')
+        print('Total time:', used_time_to_serialize + used_time_to_deserialize, 's')
         print('Done')
 
     def evaluate_for_all_pairs(self):

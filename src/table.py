@@ -1,6 +1,3 @@
-import os
-
-
 class Table:
     _index: list[str]
     _columns: list[str]

@@ -1,6 +1,8 @@
 import pickle
 import xmltodict
 import json
+import yaml
+import msgpack
 
 from objects import ObjectToEvaluate
 
@@ -44,3 +46,39 @@ class JSONSerializer(Serializer):
 
     def deserialize(self, to_deserialize: str) -> ObjectToEvaluate:
         return self.obj_class(**json.loads(to_deserialize))
+
+
+class ProtoSerializer(Serializer):
+    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
+        pass
+
+    def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
+        pass
+
+
+class AvroSerializer(Serializer):
+    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
+        pass
+
+    def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
+        pass
+
+
+class YamlSerializer(Serializer):
+    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
+        return yaml.dump(to_serialize, Dumper=yaml.CDumper)
+
+    def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
+        return yaml.load(to_deserialize, Loader=yaml.CLoader)
+
+
+class MessagePackSerializer(Serializer):
+    def __init__(self):
+        self.obj_class = None
+
+    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
+        self.obj_class = to_serialize.__class__
+        return msgpack.packb(vars(to_serialize))
+
+    def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
+        return self.obj_class(**msgpack.unpackb(to_deserialize))
