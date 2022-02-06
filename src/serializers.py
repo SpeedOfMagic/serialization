@@ -52,11 +52,15 @@ class JSONSerializer(Serializer):
 
 
 class ProtoSerializer(Serializer):
-    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
-        pass
+    def __init__(self):
+        self.obj_class = None
+
+    def serialize(self, to_serialize: ObjectToEvaluate) -> str:
+        self.obj_class = to_serialize.__class__
+        return to_serialize.map_to_protobuf()
 
     def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
-        pass
+        return self.obj_class.from_protobuf(to_deserialize)
 
 
 class AvroSerializer(Serializer):

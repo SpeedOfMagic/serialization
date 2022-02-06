@@ -26,6 +26,7 @@ class Evaluator:
         NativeSerializer(),
         XMLSerializer(),
         JSONSerializer(),
+        ProtoSerializer(),
         AvroSerializer(),
         YamlSerializer(),
         MessagePackSerializer(),
@@ -40,7 +41,7 @@ class Evaluator:
     deserialization_time: Table
     total_time: Table
 
-    def __init__(self, num_tests: int = 1000):
+    def __init__(self, num_tests):
         self.num_tests = num_tests
         self.data_size = Table(self.INDEX, self.COLUMNS)
         self.serialization_time = Table(self.INDEX, self.COLUMNS)
