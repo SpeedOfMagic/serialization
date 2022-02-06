@@ -1,4 +1,4 @@
 ./*.tsv
 .idea
 **/__pycache__
-proto/**.py
+proto/objects_pb2.py
