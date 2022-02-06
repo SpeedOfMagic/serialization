@@ -1,4 +1,4 @@
-*.tsv
+./*.tsv
 .idea
 **/__pycache__
 proto/**.py
