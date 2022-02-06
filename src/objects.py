@@ -26,3 +26,27 @@ class RepeatedObject(ObjectToEvaluate):
     def __eq__(self, other):
         return self.str1 == other.str1 and self.str2 == other.str2 \
             and self.arr1 == other.arr1 and self.arr2 == other.arr2
+
+
+class DictObject(ObjectToEvaluate):
+    def __init__(self, dict1: dict[str, int], dict2: dict[str, int], dict3: dict[str, str]):
+        self.dict1 = {k: int(v) for k, v in dict(dict1).items()}
+        self.dict2 = {k: int(v) for k, v in dict(dict2).items()}
+        self.dict3 = dict(dict3)
+
+    def __eq__(self, other):
+        return self.dict1 == other.dict1 and self.dict2 == other.dict2 and self.dict3 == other.dict3
+
+
+class CompositeObject(ObjectToEvaluate):
+    def __init__(self, int1: int, float1: float, str1: str, list1: list[int], dict1: dict[str, list[str]]):
+        self.int1 = int(int1)
+        self.float1 = float(float1)
+        self.str1 = str1
+        self.list1 = list(map(int, list1))
+        self.dict1 = dict(dict1)
+
+    def __eq__(self, other):
+        return self.int1 == other.int1 and self.str1 == other.str1 \
+            and abs(self.float1 - other.float1) / max(self.float1, other.float1) < 10 ** (-9)\
+            and self.list1 == other.list1 and self.dict1 == other.dict1

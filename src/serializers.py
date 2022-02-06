@@ -1,5 +1,6 @@
 import pickle
 import xmltodict
+import json
 
 from objects import ObjectToEvaluate
 
@@ -24,10 +25,22 @@ class XMLSerializer(Serializer):
     def __init__(self):
         self.obj_class = None
 
-    def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
+    def serialize(self, to_serialize: ObjectToEvaluate) -> str:
         self.obj_class = to_serialize.__class__
         return xmltodict.unparse({'root': vars(to_serialize)}, short_empty_elements=True)
 
-    def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
+    def deserialize(self, to_deserialize: str) -> ObjectToEvaluate:
         kwargs = dict(xmltodict.parse(to_deserialize, xml_attribs=False)['root'])
         return self.obj_class(**kwargs)
+
+
+class JSONSerializer(Serializer):
+    def __init__(self):
+        self.obj_class = None
+
+    def serialize(self, to_serialize: ObjectToEvaluate) -> str:
+        self.obj_class = to_serialize.__class__
+        return json.dumps(vars(to_serialize))
+
+    def deserialize(self, to_deserialize: str) -> ObjectToEvaluate:
+        return self.obj_class(**json.loads(to_deserialize))

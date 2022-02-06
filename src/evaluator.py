@@ -9,11 +9,19 @@ class Evaluator:
     OBJECTS_TO_EVALUATE = (
         PrimitiveObject(int1=9, float1=3.1415, int2=-5156, float2=1e128),
         RepeatedObject(str1="lorem ipsum." * 100, str2="a", arr1=[1, 2, 3, 5], arr2=["Hello world!"] * 255),
+        DictObject(dict1={"D" + str(i): i ** 2 for i in range(10)},
+                   dict2={"a": -123456789},
+                   dict3={s: s + s + s for s in ["a", "b", "c", "d", "e", "f"]}),
+        CompositeObject(int1=1234567932415896379823417265823679394567, float1=0.0001,
+                        str1="Some more of an exciting and interesting text!" * 100,
+                        list1=list(range(500)),
+                        dict1={"INT" + str(i): str(i) * 100 for i in range(100)})
     )
 
     SERIALIZERS_TO_EVALUATE = (
         NativeSerializer(),
         XMLSerializer(),
+        JSONSerializer(),
     )
 
     INDEX = list(map(lambda obj: obj.__class__.__name__, OBJECTS_TO_EVALUATE))
@@ -33,6 +41,7 @@ class Evaluator:
         self.total_time = Table(self.INDEX, self.COLUMNS)
 
     def _evaluate_for(self, obj: ObjectToEvaluate, serializer: Serializer) -> None:
+        print(f'Measuring time for object {obj.__class__.__name__} with serializer {serializer.__class__.__name__}')
         used_time_to_serialize = timeit.timeit(
             stmt='serializer.serialize(obj)',
             number=self.num_tests,
