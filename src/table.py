@@ -1,4 +1,5 @@
 class Table:
+    _title: str
     _index: list[str]
     _columns: list[str]
     _values: list[list[int or float]]
@@ -6,7 +7,8 @@ class Table:
     _cur_row: int
     _cur_col: int
 
-    def __init__(self, index: list[str], columns: list[str]):
+    def __init__(self, title: str, index: list[str], columns: list[str]):
+        self._title = title
         self._index = index
         self._columns = columns
         self._values = [[0 for _ in range(len(columns))] for __ in range(len(index))]
@@ -22,6 +24,6 @@ class Table:
 
     def to_tsv(self, file_name: str) -> None:
         with open(file_name, 'w+', encoding='utf-8') as file:
-            file.write('\t' + '\t'.join(self._columns) + '\n')
+            file.write(self._title + '\t' + '\t'.join(self._columns) + '\n')
             for row_name, row in zip(self._index, self._values):
                 file.write('\t'.join([row_name] + list(map(str, row))) + '\n')

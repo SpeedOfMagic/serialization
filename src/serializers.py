@@ -1,9 +1,8 @@
 import pickle
 import json
+import fastavro
+import fastavro.schema
 import xmltodict
-import avro
-import avro.datafile
-import avro.schema
 import yaml
 import msgpack
 
@@ -18,7 +17,7 @@ class Serializer:
         raise NotImplementedError("deserialize is not defined!")
 
 
-class NativeSerializer(Serializer):
+class Native(Serializer):
     def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
         return pickle.dumps(to_serialize)
 
@@ -26,7 +25,7 @@ class NativeSerializer(Serializer):
         return pickle.loads(to_deserialize)
 
 
-class XMLSerializer(Serializer):
+class XML(Serializer):
     def __init__(self):
         self.obj_class = None
 
@@ -39,7 +38,7 @@ class XMLSerializer(Serializer):
         return self.obj_class(**kwargs)
 
 
-class JSONSerializer(Serializer):
+class JSON(Serializer):
     def __init__(self):
         self.obj_class = None
 
@@ -51,7 +50,7 @@ class JSONSerializer(Serializer):
         return self.obj_class(**json.loads(to_deserialize))
 
 
-class ProtoSerializer(Serializer):
+class Proto(Serializer):
     def __init__(self):
         self.obj_class = None
 
@@ -63,27 +62,32 @@ class ProtoSerializer(Serializer):
         return self.obj_class.from_protobuf(to_deserialize)
 
 
-class AvroSerializer(Serializer):
+class Avro(Serializer):
     def __init__(self):
         self.obj_class = None
+        self.parsed_schema = None
 
     def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
         self.obj_class = to_serialize.__class__
-        schema_file = "avsc/" + to_serialize.__class__.__name__ + ".avsc"
-        schema = avro.schema.parse(open(schema_file, "rb").read().decode())
-        with avro.datafile.DataFileWriter(open("tmp.avro", "wb"), avro.io.DatumWriter(), schema) as writer:
-            writer.append(vars(to_serialize))
+
+        if self.parsed_schema is None:
+            schema_file = "avsc/" + to_serialize.__class__.__name__ + ".avsc"
+            self.parsed_schema = fastavro.schema.load_schema(schema_file)
+
+        with open("tmp.avro", "wb") as out:
+            fastavro.writer(out, self.parsed_schema, [vars(to_serialize)])
         return open("tmp.avro", "rb").read()
 
     def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
-        with avro.datafile.DataFileReader(open("tmp.avro", "rb"), avro.io.DatumReader()) as reader:
+        self.parsed_schema = None
+        with open("tmp.avro", "rb") as serialized:
             result = None
-            for obj in reader:
+            for obj in fastavro.reader(serialized):
                 result = obj
             return self.obj_class(**dict(result))
 
 
-class YamlSerializer(Serializer):
+class Yaml(Serializer):
     def serialize(self, to_serialize: ObjectToEvaluate) -> bytes:
         return yaml.dump(to_serialize, Dumper=yaml.CDumper)
 
@@ -91,7 +95,7 @@ class YamlSerializer(Serializer):
         return yaml.load(to_deserialize, Loader=yaml.CLoader)
 
 
-class MessagePackSerializer(Serializer):
+class MessagePack(Serializer):
     def __init__(self):
         self.obj_class = None
 

@@ -23,13 +23,13 @@ class Evaluator:
     )
 
     SERIALIZERS_TO_EVALUATE = (
-        NativeSerializer(),
-        XMLSerializer(),
-        JSONSerializer(),
-        ProtoSerializer(),
-        AvroSerializer(),
-        YamlSerializer(),
-        MessagePackSerializer(),
+        Native(),
+        XML(),
+        JSON(),
+        Proto(),
+        Avro(),
+        Yaml(),
+        MessagePack(),
     )
 
     INDEX = list(map(lambda obj: obj.__class__.__name__, SERIALIZERS_TO_EVALUATE))
@@ -40,7 +40,8 @@ class Evaluator:
 
     def __init__(self, num_tests):
         self.num_tests = num_tests
-        self.tables = {obj.__class__.__name__: Table(self.INDEX, self.COLUMNS) for obj in self.OBJECTS_TO_EVALUATE}
+        self.tables = {obj.__class__.__name__: Table(obj.__class__.__name__, self.INDEX, self.COLUMNS)
+                       for obj in self.OBJECTS_TO_EVALUATE}
 
     def _evaluate_for(self, obj: ObjectToEvaluate, serializer: Serializer) -> None:
         print(f"Measuring time for object {obj.__class__.__name__} with serializer {serializer.__class__.__name__}")
