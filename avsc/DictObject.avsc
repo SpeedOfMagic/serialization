@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "DictObject",
+  "fields": [
+    { "name": "dict1", "type": { "type": "map", "values": "int" } },
+    { "name": "dict2", "type": { "type": "map", "values": "int" } },
+    { "name": "dict3", "type": { "type": "map", "values": "string" } }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "RepeatedObject",
+  "fields": [
+    { "name": "str1", "type": "string" },
+    { "name": "str2", "type": "string" },
+    { "name": "arr1", "type": { "type": "array", "items": "int" } },
+    { "name": "arr2", "type": { "type": "array", "items": "string" } }
+  ]
+}

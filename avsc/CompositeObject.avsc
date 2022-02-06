@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "CompositeObject",
+  "fields": [
+    { "name": "int1", "type": "long" },
+    { "name": "float1", "type": "double" },
+    { "name": "str1", "type": "string" },
+    { "name": "arr1", "type": { "type": "array", "items": "int" } },
+    { "name": "dict1", "type": { "type": "map", "values": "string" } }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "PrimitiveObject",
+  "fields": [
+    { "name": "int1", "type": "int" },
+    { "name": "int2", "type": "int" },
+    { "name": "float1", "type": "double" },
+    { "name": "float2", "type": "double" }
+  ]
+}

@@ -1,6 +1,6 @@
 class ObjectToEvaluate:
     def __eq__(self, other):
-        raise NotImplementedError('== is not defined!')
+        raise NotImplementedError("== is not defined!")
 
 
 class PrimitiveObject(ObjectToEvaluate):
@@ -39,14 +39,14 @@ class DictObject(ObjectToEvaluate):
 
 
 class CompositeObject(ObjectToEvaluate):
-    def __init__(self, int1: int, float1: float, str1: str, list1: list[int], dict1: dict[str, list[str]]):
+    def __init__(self, int1: int, float1: float, str1: str, arr1: list[int], dict1: dict[str, list[str]]):
         self.int1 = int(int1)
         self.float1 = float(float1)
         self.str1 = str1
-        self.list1 = list(map(int, list1))
+        self.arr1 = list(map(int, arr1))
         self.dict1 = dict(dict1)
 
     def __eq__(self, other):
         return self.int1 == other.int1 and self.str1 == other.str1 \
             and abs(self.float1 - other.float1) / max(self.float1, other.float1) < 10 ** (-9)\
-            and self.list1 == other.list1 and self.dict1 == other.dict1
+            and self.arr1 == other.arr1 and self.dict1 == other.dict1

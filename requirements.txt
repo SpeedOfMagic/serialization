@@ -1,3 +1,4 @@
 xmltodict
+avro
 pyyaml
 msgpack
