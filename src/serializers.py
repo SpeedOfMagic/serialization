@@ -1,6 +1,6 @@
 import pickle
-import xmltodict
 import json
+import xmltodict
 import avro
 import avro.datafile
 import avro.schema
@@ -71,18 +71,16 @@ class AvroSerializer(Serializer):
         self.obj_class = to_serialize.__class__
         schema_file = "avsc/" + to_serialize.__class__.__name__ + ".avsc"
         schema = avro.schema.parse(open(schema_file, "rb").read().decode())
-        writer = avro.datafile.DataFileWriter(open("tmp.avro", "wb"), avro.io.DatumWriter(), schema)
-        writer.append(vars(to_serialize))
-        writer.close()
+        with avro.datafile.DataFileWriter(open("tmp.avro", "wb"), avro.io.DatumWriter(), schema) as writer:
+            writer.append(vars(to_serialize))
         return open("tmp.avro", "rb").read()
 
     def deserialize(self, to_deserialize: bytes) -> ObjectToEvaluate:
-        reader = avro.datafile.DataFileReader(open("tmp.avro", "rb"), avro.io.DatumReader())
-        result = None
-        for obj in reader:
-            result = obj
-        reader.close()
-        return self.obj_class(**dict(result))
+        with avro.datafile.DataFileReader(open("tmp.avro", "rb"), avro.io.DatumReader()) as reader:
+            result = None
+            for obj in reader:
+                result = obj
+            return self.obj_class(**dict(result))
 
 
 class YamlSerializer(Serializer):

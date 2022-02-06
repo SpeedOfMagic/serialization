@@ -21,7 +21,7 @@ class Table:
             self._cur_col = 0
 
     def to_tsv(self, file_name: str) -> None:
-        with open(file_name, 'w+') as f:
-            f.write('\t' + '\t'.join(self._columns) + '\n')
+        with open(file_name, 'w+', encoding='utf-8') as file:
+            file.write('\t' + '\t'.join(self._columns) + '\n')
             for row_name, row in zip(self._index, self._values):
-                f.write('\t'.join([row_name] + list(map(str, row))) + '\n')
+                file.write('\t'.join([row_name] + list(map(str, row))) + '\n')

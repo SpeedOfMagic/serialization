@@ -69,7 +69,7 @@ class Evaluator:
         )
         used_time_to_deserialize = round(used_time_to_deserialize, 6)
         self.deserialization_time.set(used_time_to_deserialize)
-        
+
         deserialized = serializer.deserialize(serialized)
         assert deserialized == obj, \
             f"Serializer {serializer.__class__.__name__} returned wrong value for object {obj.__class__.__name__}"
