@@ -14,5 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag serialization && docker run serialization
+    - name: Build the serialization image
+      run: docker build . --file Dockerfile --tag serialization
+    - name: Run the serialization image
+      run: docker run serialization
